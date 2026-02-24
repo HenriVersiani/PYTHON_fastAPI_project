@@ -1,13 +1,29 @@
 from sqlalchemy.orm import Session
 from app.models import User
 
-def create_user(db: Session, user_data):
-    user = User(name=user_data.name, email=user_data.email)
-    db.add(user)
-    db.commit()
-    db.refresh(user)
-    return user
 
+class UserRepository:
+	@staticmethod
+	async def create(db, user):
+		user_obj = User(name=user.name, email=user.email)
+		db.add(user_obj)
+		db.commit()
+		db.refresh(user_obj)
+		return user_obj
 
-def get_users(db: Session):
-    return db.query(User).all()
+	@staticmethod
+	async def list(db):
+		return User.get_all(db)
+
+	@staticmethod
+	async def get_by_id(db, user_id):
+		return User.get_by_id(db, user_id)
+
+	@staticmethod
+	async def delete(db, user_id):
+		return User.delete_by_id(db, user_id)
+
+	@staticmethod
+	async def update(db, user_id, user_data):
+		data = user_data.dict(exclude_unset=True)
+		return User.update_by_id(db, user_id, data)
