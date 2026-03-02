@@ -15,7 +15,7 @@ class SimpleLoggerMiddleware(BaseHTTPMiddleware):
             f"- Status: {response.status_code} " #status da resposta
             f"- {process_time:.3f}s" #tempo que demorou
         )
-        
+         
         return response
 
 app.add_middleware(SimpleLoggerMiddleware)  #aplicando geral
