@@ -20,3 +20,5 @@ class UserService:
     @staticmethod
     async def update(db, user_id, user_data):
         return await UserRepository.update(db, user_id, user_data)
+
+#testing commit
