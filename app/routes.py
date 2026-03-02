@@ -16,8 +16,6 @@ def get_db():
     finally:
         db.close()
 
-# Route-specific dependency middlewares
-
 def validate_user_id(user_id: int):
     if user_id <= 0:
         raise HTTPException(status_code=400, detail="Invalid user ID. Must be a positive integer")
