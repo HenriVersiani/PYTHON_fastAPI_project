@@ -4,7 +4,7 @@ from starlette.middleware.base import BaseHTTPMiddleware
 
 app = FastAPI()
 
-class SimpleLoggerMiddleware(BaseHTTPMiddleware):
+class SimpleMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
         start_time = time.time()
         response = await call_next(request)
@@ -18,4 +18,4 @@ class SimpleLoggerMiddleware(BaseHTTPMiddleware):
          
         return response
 
-app.add_middleware(SimpleLoggerMiddleware)  #aplicando geral
+app.add_middleware(SimpleMiddleware)  #aplicando geral
