@@ -1,15 +1,13 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
 
 from app.database import SessionLocal
-from app.schemas import UserCreate, UserResponse
-from app.services import create_user_service, list_users_service
+from app.schemas import UserCreate, UserResponse, UserUpdate
+from app.services import UserService
 
 router = APIRouter()
 
-
-# Dependência para abrir e fechar sessão automaticamente
 def get_db():
     db = SessionLocal()
     try:
@@ -17,12 +15,32 @@ def get_db():
     finally:
         db.close()
 
-
 @router.post("/users", response_model=UserResponse)
-def create_user(user: UserCreate, db: Session = Depends(get_db)):
-    return create_user_service(db, user)
+async def create_user(user: UserCreate, db: Session = Depends(get_db)):
+    return await UserService.create(db, user)
 
+@router.get("/users/search", response_model=List[UserResponse])
+async def list_users(db: Session = Depends(get_db)):
+    return await UserService.list(db)
 
-@router.get("/users", response_model=List[UserResponse])
-def list_users(db: Session = Depends(get_db)):
-    return list_users_service(db)
+@router.get("/users/{user_id}", response_model=UserResponse)
+async def get_user(user_id: int, db: Session = Depends(get_db)):
+    try:
+        return await UserService.get_by_id(db, user_id)
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+@router.put("/users/{user_id}", response_model=UserResponse)
+async def update_user(user_id: int, user_data: UserUpdate, db: Session = Depends(get_db)):
+    try:
+        return await UserService.update(db, user_id, user_data)
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+@router.delete("/users/{user_id}")
+async def delete_user(user_id: int, db: Session = Depends(get_db)):
+    try:
+        await UserService.delete(db, user_id)
+        return {"message": "Deletado com sucesso"}
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
