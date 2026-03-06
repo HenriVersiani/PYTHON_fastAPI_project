@@ -5,8 +5,6 @@ from app.schemas import UserCreate, UserResponse
 from app.repository import UserRepository
 from app.models import User
 
-
-# ========== FIXTURE 1: Mock Session ==========
 @pytest.fixture
 def mock_db():
     return MagicMock()
