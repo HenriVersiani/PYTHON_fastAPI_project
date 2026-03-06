@@ -5,24 +5,14 @@ from app.schemas import UserCreate, UserResponse
 from app.repository import UserRepository
 from app.models import User
 
-
-# ========== FIXTURE 1: Mock Session ==========
 @pytest.fixture
 def mock_db():
-    """
-    Creates a fake database session using MagicMock.
-    This lets us test without a real database!
-    """
     return MagicMock()
 
-
-# ========== FIXTURE 2: Sample User Data ==========
 @pytest.fixture
 def sample_user_data():
     return {"name": "John Doe", "email": "john@example.com"}
 
-
-# ========== FIXTURE 3: Sample User Model ==========
 @pytest.fixture
 def sample_user_model(sample_user_data):
     user = MagicMock()
@@ -62,15 +52,6 @@ def test_mock_session_calls(mock_db, sample_user_model): #ver se o mock funciona
     assert mock_db.commit.called
     assert mock_db.refresh.called
     print("✓ Mock session calls verified")
-
-def test_fixture_isolation(mock_db):
-    """Each test gets its own fresh mock_db (no data leaks between tests)"""
-    mock_db.query.return_value.all.return_value = []
-    result = mock_db.query().all()
-    
-    assert result == []
-    print("✓ Fixture isolation passed")
-
 
 # testes das validacoes dos schemas
 
@@ -118,7 +99,6 @@ def test_user_create_whitespace_trimming():
 if __name__ == "__main__":
     print("\n=== Running All Tests ===\n")
     
-    # Schema validation tests
     test_user_create_valid()
     test_user_create_empty_name()
     test_user_create_empty_email()
@@ -126,13 +106,10 @@ if __name__ == "__main__":
     test_user_response_negative_id()
     test_user_create_whitespace_trimming()
     
-    # Mock/Fixture tests (need mocks)
     from unittest.mock import MagicMock
     mock_db = MagicMock()
-    test_fixture_isolation(mock_db)
     test_create_user_with_mock(mock_db, {"name": "John Doe", "email": "john@example.com"})
     
-    # Create sample user model for test_mock_session_calls
     sample_user_model = MagicMock()
     sample_user_model.id = 1
     sample_user_model.name = "John Doe"

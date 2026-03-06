@@ -29,5 +29,3 @@ class UserService:
         if not user:
             raise ValueError("User not found")
         return await UserRepository.update(db, user_id, user_data)
-
-#testing commit
