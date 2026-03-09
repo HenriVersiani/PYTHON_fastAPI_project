@@ -7,7 +7,6 @@ import app.models
 app = FastAPI()
 Base.metadata.create_all(bind=engine)
 
-# Add simple middleware
 app.add_middleware(SimpleMiddleware)
 
 app.include_router(router)
