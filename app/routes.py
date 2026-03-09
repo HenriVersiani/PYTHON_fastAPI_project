@@ -20,21 +20,21 @@ def get_db():
 async def create_user(user: UserCreate, db: Session = Depends(get_db), request: Request = None):
     context = get_user_context(request)
     
-    print(f"✅ Usuário criado por: {context['username']}")
+    print(f" Usuário criado por: {context['username']}")
     return await UserService.create(db, user)
 
 @router.get("/users/search", response_model=List[UserResponse])
 async def list_users(db: Session = Depends(get_db), request: Request = None):
     context = get_user_context(request)
     
-    print(f"✅ Usuários listados por: {context['username']}")
+    print(f" Usuários listados por: {context['username']}")
     return await UserService.list(db)
 
 @router.get("/users/{user_id}", response_model=UserResponse)
 async def get_user(user_id: int, db: Session = Depends(get_db), request: Request = None):
     context = get_user_context(request)
     
-    print(f"✅ Usuário {user_id} acessado por: {context['username']} (ID: {context['user_id']})")
+    print(f" Usuário {user_id} acessado por: {context['username']} (ID: {context['user_id']})")
     try:
         return await UserService.get_by_id(db, user_id)
     except ValueError as e:
@@ -44,7 +44,7 @@ async def get_user(user_id: int, db: Session = Depends(get_db), request: Request
 async def update_user(user_id: int, user_data: UserUpdate, db: Session = Depends(get_db), request: Request = None):
     context = get_user_context(request)
     
-    print(f"✅ Usuário {user_id} atualizado por: {context['username']}")
+    print(f" Usuário {user_id} atualizado por: {context['username']}")
     try:
         return await UserService.update(db, user_id, user_data)
     except ValueError as e:
@@ -54,7 +54,7 @@ async def update_user(user_id: int, user_data: UserUpdate, db: Session = Depends
 async def delete_user(user_id: int, db: Session = Depends(get_db), request: Request = None):
     context = get_user_context(request)
     
-    print(f"✅ Usuário {user_id} deletado por: {context['username']}")
+    print(f" Usuário {user_id} deletado por: {context['username']}")
     try:
         await UserService.delete(db, user_id)
         return {"message": "Deletado com sucesso"}

@@ -7,7 +7,7 @@ app = FastAPI()
 class SimpleMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
         request.state.user_id = request.headers.get("X-User-Id")
-        request.state.username = request.headers.get("X-Username") #so coloquei pra enviar esses headers no getAll por enquanto.
+        request.state.username = request.headers.get("X-Username")
         
         start_time = time.time()
         response = await call_next(request)
