@@ -5,6 +5,7 @@ from pydantic import field_validator
 class UserCreate(BaseModel):
     name: str
     email: str
+    role: Optional[str] = "user"
 
     @field_validator("name")
     def name_not_empty(cls, v):
@@ -18,15 +19,32 @@ class UserCreate(BaseModel):
             raise ValueError("Email cannot be empty")
         return v.strip()
 
+    @field_validator("role")
+    def role_valid(cls, v):
+        valid_roles = ["user", "admin"]
+        if v not in valid_roles:
+            raise ValueError(f"Role must be one of {valid_roles}")
+        return v
+
 class UserUpdate(BaseModel):
     name: Optional[str] = None
     email: Optional[str] = None
+    role: Optional[str] = None
+
+    @field_validator("role")
+    def role_valid(cls, v):
+        if v is not None:
+            valid_roles = ["user", "admin"]
+            if v not in valid_roles:
+                raise ValueError(f"Role must be one of {valid_roles}")
+        return v
 
 
 class UserResponse(BaseModel):
     id: int = Field(..., description="ID do usuário")
     name: str
     email: str
+    role: str
 
     @field_validator("id")
     def id_must_be_positive(cls, v):
