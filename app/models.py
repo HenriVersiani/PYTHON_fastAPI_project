@@ -39,3 +39,4 @@ class User(BaseModel):
 
     name = Column(String)
     email = Column(String, unique=True, index=True)
+    role = Column(String, default="user", index=True)
