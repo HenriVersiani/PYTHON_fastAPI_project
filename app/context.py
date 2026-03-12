@@ -10,7 +10,6 @@ def get_user_context(request: Request):
 
 
 def require_admin(request: Request):
-    """Dependency to check if user has admin role"""
     context = get_user_context(request)
     if context["role"] != "admin":
         raise HTTPException(status_code=403, detail="Admin access required")
@@ -18,7 +17,6 @@ def require_admin(request: Request):
 
 
 def require_user(request: Request):
-    """Dependency to check if user is authenticated"""
     context = get_user_context(request)
     if not context["user_id"]:
         raise HTTPException(status_code=401, detail="Not authenticated")
