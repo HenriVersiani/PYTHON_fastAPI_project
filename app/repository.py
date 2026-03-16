@@ -1,13 +1,20 @@
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy import select
 from app.models import User
+from app.auth import hash_password
 
 
 class UserRepository:
 	@staticmethod
 	async def create(db, user):
 		try:
-			user_obj = User(name=user.name, email=user.email, role=user.role)
+			user_obj = User(
+				name=user.name, 
+				email=user.email, 
+				password=hash_password(user.password),
+				role=user.role
+			)
 			db.add(user_obj)
 			db.commit()
 			db.refresh(user_obj)
@@ -25,6 +32,11 @@ class UserRepository:
 	@staticmethod
 	async def get_by_id(db, user_id):
 		return User.get_by_id(db, user_id)
+
+	@staticmethod
+	async def get_by_email(db, email: str):
+		stmt = select(User).where(User.email == email)
+		return db.scalars(stmt).first()
 
 	@staticmethod
 	async def delete(db, user_id):

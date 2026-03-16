@@ -5,6 +5,7 @@ from pydantic import field_validator
 class UserCreate(BaseModel):
     name: str
     email: str
+    password: str
     role: Optional[str] = "user"
 
     @field_validator("name")
@@ -18,6 +19,12 @@ class UserCreate(BaseModel):
         if not v or len(v.strip()) == 0:
             raise ValueError("Email cannot be empty")
         return v.strip()
+
+    @field_validator("password")
+    def password_not_empty(cls, v):
+        if not v or len(v) < 6:
+            raise ValueError("Password must be at least 6 characters")
+        return v
 
     @field_validator("role")
     def role_valid(cls, v):
@@ -54,3 +61,26 @@ class UserResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class LoginRequest(BaseModel):
+    email: str
+    password: str
+
+    @field_validator("email")
+    def email_not_empty(cls, v):
+        if not v or len(v.strip()) == 0:
+            raise ValueError("Email cannot be empty")
+        return v.strip()
+
+    @field_validator("password")
+    def password_not_empty(cls, v):
+        if not v:
+            raise ValueError("Password cannot be empty")
+        return v
+
+
+class TokenResponse(BaseModel):
+    access_token: str = Field(..., description="JWT access token")
+    token_type: str = "bearer"
+    user: UserResponse = Field(..., description="User information")

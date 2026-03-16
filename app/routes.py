@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from typing import List
 
 from app.database import SessionLocal
-from app.schemas import UserCreate, UserResponse, UserUpdate
+from app.schemas import UserCreate, UserResponse, UserUpdate, LoginRequest, TokenResponse
 from app.services import UserService
 from app.context import get_user_context, require_admin, require_user
 
@@ -15,6 +15,15 @@ def get_db():
         yield db
     finally:
         db.close()
+
+@router.post("/login", response_model=TokenResponse, tags=["Authentication"])
+async def login(credentials: LoginRequest, db: Session = Depends(get_db)):
+    """Login with email and password. Returns JWT token and user info."""
+    try:
+        result = await UserService.login(db, credentials.email, credentials.password)
+        return result
+    except ValueError as e:
+        raise HTTPException(status_code=401, detail=str(e))
 
 @router.post("/users", response_model=UserResponse, tags=["Public"])
 async def create_user(user: UserCreate, db: Session = Depends(get_db), request: Request = None):
