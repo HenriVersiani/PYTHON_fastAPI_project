@@ -1,11 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
 
 from app.database import SessionLocal
 from app.schemas import UserCreate, UserResponse, UserUpdate, LoginRequest, TokenResponse
 from app.services import UserService
-from app.context import get_user_context, require_admin, require_user
+from app.context import require_admin, require_user
 
 router = APIRouter()
 
@@ -18,7 +18,6 @@ def get_db():
 
 @router.post("/login", response_model=TokenResponse, tags=["Authentication"])
 async def login(credentials: LoginRequest, db: Session = Depends(get_db)):
-    """Login with email and password. Returns JWT token and user info."""
     try:
         result = await UserService.login(db, credentials.email, credentials.password)
         return result
@@ -26,31 +25,28 @@ async def login(credentials: LoginRequest, db: Session = Depends(get_db)):
         raise HTTPException(status_code=401, detail=str(e))
 
 @router.post("/users", response_model=UserResponse, tags=["Public"])
-async def create_user(user: UserCreate, db: Session = Depends(get_db), request: Request = None):
-    context = get_user_context(request)
-    
-    print(f" Usuário criado por: {context['username'] or 'Anonymous'}")
+async def create_user(user: UserCreate, db: Session = Depends(get_db)):
     try:
         return await UserService.create(db, user)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-@router.get("/users/search", response_model=List[UserResponse], tags=["Admin"])
-async def list_users(db: Session = Depends(get_db), context: dict = Depends(require_admin)):
-    print(f" Usuários listados por: {context['username']}")
+@router.get("/users/search", response_model=List[UserResponse], tags=["Protected"])
+async def list_users(db: Session = Depends(get_db), user: dict = Depends(require_admin)):
+    print(f"Usuários listados por: {user['email']} (ID: {user['user_id']})")
     return await UserService.list(db)
 
-@router.get("/users/{user_id}", response_model=UserResponse, tags=["Admin"])
-async def get_user(user_id: int, db: Session = Depends(get_db), context: dict = Depends(require_admin)):
-    print(f" Usuário {user_id} acessado por: {context['username']} (ID: {context['user_id']})")
+@router.get("/users/{user_id}", response_model=UserResponse, tags=["Protected"])
+async def get_user(user_id: int, db: Session = Depends(get_db), user: dict = Depends(require_admin)):
+    print(f"Usuário {user_id} acessado por: {user['email']} (ID: {user['user_id']})")
     try:
         return await UserService.get_by_id(db, user_id)
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
 
-@router.put("/users/{user_id}", response_model=UserResponse, tags=["Admin"])
-async def update_user(user_id: int, user_data: UserUpdate, db: Session = Depends(get_db), context: dict = Depends(require_admin)):
-    print(f" Usuário {user_id} atualizado por: {context['username']}")
+@router.put("/users/{user_id}", response_model=UserResponse, tags=["Protected"])
+async def update_user(user_id: int, user_data: UserUpdate, db: Session = Depends(get_db), user: dict = Depends(require_admin)):
+    print(f"Usuário {user_id} atualizado por: {user['email']} (ID: {user['user_id']})")
     try:
         return await UserService.update(db, user_id, user_data)
     except ValueError as e:
@@ -59,11 +55,12 @@ async def update_user(user_id: int, user_data: UserUpdate, db: Session = Depends
             raise HTTPException(status_code=400, detail=error_msg)
         raise HTTPException(status_code=404, detail=error_msg)
 
-@router.delete("/users/{user_id}", tags=["Admin"])
-async def delete_user(user_id: int, db: Session = Depends(get_db), context: dict = Depends(require_admin)):
-    print(f" Usuário {user_id} deletado por: {context['username']}")
+@router.delete("/users/{user_id}", tags=["Protected"])
+async def delete_user(user_id: int, db: Session = Depends(get_db), user: dict = Depends(require_admin)):
+    print(f"Usuário {user_id} deletado por: {user['email']} (ID: {user['user_id']})")
     try:
         await UserService.delete(db, user_id)
         return {"message": "Deletado com sucesso"}
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
+
