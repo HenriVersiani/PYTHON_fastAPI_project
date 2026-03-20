@@ -15,11 +15,11 @@ class SimpleMiddleware(BaseHTTPMiddleware):
         process_time = time.time() - start_time
         
         print(
-            f"{request.method} {request.url.path} " #metodo e caminho
-            f"- Status: {response.status_code} " #status da resposta
-            f"- {process_time:.3f}s" #tempo que demorou
+            f"{request.method} {request.url.path} "
+            f"- Status: {response.status_code} "
+            f"- {process_time:.3f}s"
         )
          
         return response
 
-app.add_middleware(SimpleMiddleware)  #aplicando geral
+app.add_middleware(SimpleMiddleware)
