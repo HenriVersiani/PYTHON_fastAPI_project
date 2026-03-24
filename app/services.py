@@ -4,6 +4,13 @@ from datetime import timedelta
 
 class UserService:
     @staticmethod
+    async def _get_user_or_raise(db, user_id):
+        user = await UserRepository.get_by_id(db, user_id)
+        if not user:
+            raise ValueError("User not found")
+        return user
+
+    @staticmethod
     async def create(db, user):
         return await UserRepository.create(db, user)
 
@@ -13,23 +20,16 @@ class UserService:
 
     @staticmethod
     async def get_by_id(db, user_id):
-        user = await UserRepository.get_by_id(db, user_id)
-        if not user:
-            raise ValueError("User not found")
-        return user
+        return await UserService._get_user_or_raise(db, user_id)
 
     @staticmethod
     async def delete(db, user_id):
-        user = await UserRepository.get_by_id(db, user_id)
-        if not user:
-            raise ValueError("User not found")
+        await UserService._get_user_or_raise(db, user_id)
         return await UserRepository.delete(db, user_id)
 
     @staticmethod
     async def update(db, user_id, user_data):
-        user = await UserRepository.get_by_id(db, user_id)
-        if not user:
-            raise ValueError("User not found")
+        await UserService._get_user_or_raise(db, user_id)
         return await UserRepository.update(db, user_id, user_data)
 
     @staticmethod
@@ -40,7 +40,6 @@ class UserService:
         if not verify_password(password, user.password):
             raise ValueError("Invalid email or password")
         
-        # Create JWT token
         access_token_expires = timedelta(minutes=30)
         token_data = {
             "sub": str(user.id),
