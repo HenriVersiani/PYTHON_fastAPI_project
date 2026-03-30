@@ -16,7 +16,7 @@ def get_db():
     finally:
         db.close()
 
-@router.post("/login", response_model=TokenResponse, tags=["Authentication"])
+@router.post("/login", response_model=TokenResponse)
 async def login(credentials: LoginRequest, db: Session = Depends(get_db)):
     try:
         result = await UserService.login(db, credentials.email, credentials.password)
@@ -24,19 +24,19 @@ async def login(credentials: LoginRequest, db: Session = Depends(get_db)):
     except ValueError as e:
         raise HTTPException(status_code=401, detail=str(e))
 
-@router.post("/users", response_model=UserResponse, tags=["Public"])
+@router.post("/users", response_model=UserResponse)
 async def create_user(user: UserCreate, db: Session = Depends(get_db)):
     try:
         return await UserService.create(db, user)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-@router.get("/users/search", response_model=List[UserResponse], tags=["Protected"])
+@router.get("/users/search", response_model=List[UserResponse])
 async def list_users(db: Session = Depends(get_db), user: dict = Depends(require_admin)):
     print(f"Usuários listados por: {user['email']} (ID: {user['user_id']})")
     return await UserService.list(db)
 
-@router.get("/users/{user_id}", response_model=UserResponse, tags=["Protected"])
+@router.get("/users/{user_id}", response_model=UserResponse)
 async def get_user(user_id: int, db: Session = Depends(get_db), user: dict = Depends(require_admin)):
     print(f"Usuário {user_id} acessado por: {user['email']} (ID: {user['user_id']})")
     try:
@@ -44,7 +44,7 @@ async def get_user(user_id: int, db: Session = Depends(get_db), user: dict = Dep
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
 
-@router.put("/users/{user_id}", response_model=UserResponse, tags=["Protected"])
+@router.put("/users/{user_id}", response_model=UserResponse)
 async def update_user(user_id: int, user_data: UserUpdate, db: Session = Depends(get_db), user: dict = Depends(require_admin)):
     print(f"Usuário {user_id} atualizado por: {user['email']} (ID: {user['user_id']})")
     try:
@@ -55,7 +55,7 @@ async def update_user(user_id: int, user_data: UserUpdate, db: Session = Depends
             raise HTTPException(status_code=400, detail=error_msg)
         raise HTTPException(status_code=404, detail=error_msg)
 
-@router.delete("/users/{user_id}", tags=["Protected"])
+@router.delete("/users/{user_id}")
 async def delete_user(user_id: int, db: Session = Depends(get_db), user: dict = Depends(require_admin)):
     print(f"Usuário {user_id} deletado por: {user['email']} (ID: {user['user_id']})")
     try:
