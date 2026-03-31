@@ -79,7 +79,6 @@ class LoginRequest(BaseModel):
             raise ValueError("Password cannot be empty")
         return v
 
-
 class TokenResponse(BaseModel):
     access_token: str = Field(..., description="JWT access token")
     token_type: str = "bearer"

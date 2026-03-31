@@ -12,7 +12,7 @@ class UserRepository:
 			user_obj = User(
 				name=user.name, 
 				email=user.email, 
-				password=hash_password(user.password),
+				password=hash_password(user.password), #criar funcao de hash para senhas.
 				role=user.role
 			)
 			db.add(user_obj)
