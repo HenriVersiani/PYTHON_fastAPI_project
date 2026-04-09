@@ -11,7 +11,12 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 
 def hash_password(password: str) -> str:
-    return pwd_context.hash(password)
+    if len(password.encode('utf-8')) > 72:
+        raise ValueError("Password cannot be longer than 72 bytes")
+    try:
+        return pwd_context.hash(password)
+    except ValueError as e:
+        raise ValueError(f"Password error: {str(e)}")
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:

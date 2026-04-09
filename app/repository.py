@@ -12,13 +12,16 @@ class UserRepository:
 			user_obj = User(
 				name=user.name, 
 				email=user.email, 
-				password=hash_password(user.password), #criar funcao de hash para senhas.
-				role=user.role
+				password=hash_password(user.password),
+				role_id=user.role_id
 			)
 			db.add(user_obj)
 			db.commit()
 			db.refresh(user_obj)
 			return user_obj
+		except ValueError as e:
+			db.rollback()
+			raise ValueError(f"Password error: {str(e)}")
 		except IntegrityError as e:
 			db.rollback()
 			if "email" in str(e):

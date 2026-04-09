@@ -1,0 +1,17 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+env/
+.env
+.DS_Store
+*.egg-info/
+dist/
+build/
+uv.lock
+*.crypton
+*.lockb
+.pytest_cache/
+.coverage
+htmlcov/
+*.log

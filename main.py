@@ -2,10 +2,13 @@ from fastapi import FastAPI
 from app.database import engine, Base
 from app.routes import router
 from app.middleware import SimpleMiddleware
+from app.init_db import init_db
 import app.models
 
 app = FastAPI()
-Base.metadata.create_all(bind=engine)
+
+# Inicializar banco de dados e roles
+init_db()
 
 app.add_middleware(SimpleMiddleware)
 

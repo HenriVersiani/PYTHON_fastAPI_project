@@ -1,0 +1,21 @@
+[project]
+name = "fastapi-project"
+version = "0.1.0"
+description = "FastAPI project with SQLAlchemy"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.104.0",
+    "uvicorn>=0.24.0",
+    "sqlalchemy>=2.0.0",
+    "psycopg2-binary>=2.9.0",
+    "pydantic>=2.5.0",
+    "passlib>=1.7.4",
+    "bcrypt>=4.0.1",
+    "pyjwt>=2.8.0",
+    "python-dotenv>=1.0.0",
+    "pytest>=7.4.0",
+]
+
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"

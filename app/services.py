@@ -44,7 +44,7 @@ class UserService:
         token_data = {
             "sub": str(user.id),
             "email": user.email,
-            "role": user.role
+            "role": user.role.name
         }
         access_token = create_access_token(data=token_data, expires_delta=access_token_expires)
         

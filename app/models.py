@@ -1,4 +1,5 @@
-from sqlalchemy import Column, Integer, String, select
+from sqlalchemy import Column, Integer, String, select, ForeignKey
+from sqlalchemy.orm import relationship
 from app.database import Base
 
 class BaseModel(Base):
@@ -34,10 +35,17 @@ class BaseModel(Base):
             db.refresh(obj)
         return obj
 
+class Role(BaseModel):
+    __tablename__ = "roles"
+
+    name = Column(String, unique=True, index=True)
+    users = relationship("User", back_populates="role")
+
 class User(BaseModel):
     __tablename__ = "users"
 
     name = Column(String)
     email = Column(String, unique=True, index=True)
     password = Column(String)
-    role = Column(String, default="user", index=True)
+    role_id = Column(Integer, ForeignKey("roles.id"), index=True, default=1)
+    role = relationship("Role", back_populates="users")

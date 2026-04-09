@@ -29,7 +29,10 @@ async def create_user(user: UserCreate, db: Session = Depends(get_db)):
     try:
         return await UserService.create(db, user)
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        error_msg = str(e)
+        if "Password" in error_msg or "password" in error_msg:
+            raise HTTPException(status_code=400, detail=error_msg)
+        raise HTTPException(status_code=400, detail=error_msg)
 
 @router.get("/users/search", response_model=List[UserResponse])
 async def list_users(db: Session = Depends(get_db), user: dict = Depends(require_admin)):
