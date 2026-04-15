@@ -15,3 +15,4 @@ uv.lock
 .coverage
 htmlcov/
 *.log
+docker-compose.yml

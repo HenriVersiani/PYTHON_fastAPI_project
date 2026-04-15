@@ -1,0 +1,47 @@
+.users-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.user-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.25s;
+}
+
+.user-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.user-card h3 {
+  margin: 0 0 1rem 0;
+  color: var(--primary);
+  font-size: 1.25rem;
+}
+
+.user-card p {
+  margin: 0.5rem 0;
+  color: #666;
+}
+
+.user-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.btn-delete {
+  background-color: var(--error);
+  flex: 1;
+}
+
+.btn-delete:hover {
+  background-color: #c62828;
+}
