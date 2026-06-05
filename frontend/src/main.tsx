@@ -11,3 +11,5 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     </AuthProvider>
   </React.StrictMode>,
 )
+
+// avanco de estudo e entendendo frontend.
